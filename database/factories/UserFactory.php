@@ -25,7 +25,7 @@ class UserFactory extends Factory
         $subscriptions=[User::SUBSCRIPTION_FREE,User::SUBSCRIPTION_PREMIUM];
         return [
             'first_name' => $this->faker->firstName(),
-            'first_name' => $this->faker->lastName(),
+            'last_name' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail,
             'password' => password_hash('password',PASSWORD_DEFAULT),
             'api_token' => Str::random(64),
