@@ -9,18 +9,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class Post extends Model
 {
-    use Authenticatable, Authorizable, HasFactory;
-    public const SUBSCRIPTION_FREE='free';
-    public const SUBSCRIPTION_PREMIUM='premium';
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
     protected $fillable = [
-        'first_name','last_name','picture','subscription', 'email',
+        'title', 'content'
     ];
 
     /**
@@ -29,11 +28,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var string[]
      */
     protected $hidden = [
-        'password','api_token'
+        
     ];
 
-    public function posts(){
-        return $this->hasMany(Post::class);
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 
     public function comments(){
