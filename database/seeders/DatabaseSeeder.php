@@ -27,7 +27,9 @@ class DatabaseSeeder extends Seeder
         }
         $usersIds=$users->pluck('id')->toArray();
         $postIds=$posts->pluck('id')->toArray();
-        Comment::factory(['user_id'=>$usersIds[array_rand($usersIds)],'post_id'=>$postIds[array_rand($postIds)]])->count(20)->create();
+        for($i=0;$i<50;$i++){
+            Comment::factory(['user_id'=>$usersIds[array_rand($usersIds)],'post_id'=>$postIds[array_rand($postIds)]])->create();
+        }
         // dd($postIds);
     }
 }
