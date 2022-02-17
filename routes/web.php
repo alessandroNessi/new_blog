@@ -26,6 +26,11 @@ $router->group(['prefix' => 'posts'],function() use($router){
 $router->group(['prefix' => 'comments'],function() use($router){
     $router->get('','CommentController@getPostComments');
     $router->get('{commentId}','CommentController@getComment');
+    $router->group(['middleware'=>'auth'],function() use($router){
+        $router->post('create','CommentController@create');
+        $router->put('{commentId}','CommentController@edit');
+        $router->delete('{commentId}','CommentController@delete');
+    });
 });
 
 $router->group(['prefix'=>'auth'],function() use($router){
