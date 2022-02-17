@@ -19,6 +19,7 @@ $router->group(['prefix' => 'posts'],function() use($router){
     $router->group(['middleware'=>'auth'], function() use($router){
         $router->post('create', 'PostController@create');
         $router->put('{postId}', 'Postcontroller@edit');
+        $router->delete('{postId}', 'Postcontroller@delete');
     });
 });
 

@@ -40,18 +40,33 @@ class PostController extends Controller
         $post->save();
         return $post;
     }
-    //$router->put('edit', 'Postcontroller@edit');
+
     public function edit(Request $request, $postId){
         $userId = Auth::user()->id;
-        // $this->validate($request,[
-        //     'postId'=>'required',
-        // ]);
         $post=Post::findOrFail($postId);
         if($post->user_id==$userId){
-            abort(404);
+            if($request->title){
+                $post->title=$request->title;
+            }
+            if($request->content){
+                $post->content=$request->content;
+            }
+            $post->save();
+            return $post;
         }else{
-            abort(405);
+            abort(505);
         }
+    }
+
+    public function delete($postId){
+        $userId=Auth::user()->id;
+        $post=Post::findOrFail($postId);
+        if($userId==$post->user_id){
+            $post->delete();
+            return [];
+        }
+        return [];
+        abort(505);
     }
     //
 }
