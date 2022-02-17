@@ -13,6 +13,12 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+$router->group(['prefix' => 'posts'],function() use($router){
+    $router->get('', 'PostController@list');
+    $router->get('{postId}', 'PostController@singlePost');
+});
+
+$router->group(['prefix' => 'comments'],function() use($router){
+    $router->get('','CommentController@getPostComments');
+    $router->get('{commentId}','CommentController@getComment');
 });
