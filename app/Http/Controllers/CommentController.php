@@ -25,7 +25,7 @@ class CommentController extends Controller
     }
     public function getPostComments(Request $request){
         $postId=$request->input('postId');
-        return Comment::where('post_id','=',$postId)->get();
+        return Comment::where('post_id',$postId)->with('user')->get();
     }
     //
 }
