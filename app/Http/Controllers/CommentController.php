@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\UnauthorizedException;
 
 class CommentController extends Controller
 {
@@ -52,7 +53,7 @@ class CommentController extends Controller
             $comment->save();
             return $comment;
         }
-        abort(401);
+        throw new UnauthorizedException('you don\'t own the comment you are trying to edit');
     }
 
     public function delete($commentId){
@@ -62,7 +63,7 @@ class CommentController extends Controller
             $comment->delete();
             return [];
         }
-        abort(401);
+        throw new UnauthorizedException('you don\'t own the comment you are trying to delete');
     }
 
 }

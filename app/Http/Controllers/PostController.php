@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\UnauthorizedException;
 
 class PostController extends Controller
 {
@@ -45,16 +46,15 @@ class PostController extends Controller
         $userId = Auth::user()->id;
         $post=Post::findOrFail($postId);
         if($post->user_id==$userId){
-            if($request->title){
-                $post->title=$request->title;
-            }
-            if($request->content){
-                $post->content=$request->content;
-            }
+            $this->validate($request,[
+                'title'=>'required_without:content',
+                'content'=>'required_without:title'
+            ]);
+            $post->fill($request->all());
             $post->save();
             return $post;
         }
-        abort(401);
+        throw new UnauthorizedException('you don\'t own the post you are trying to edit');
     }
 
     public function delete($postId){
@@ -64,7 +64,7 @@ class PostController extends Controller
             $post->delete();
             return [];
         }
-        abort(401);
+        throw new UnauthorizedException('you don\'t own the post you are trying to delete');
     }
     //
 }
