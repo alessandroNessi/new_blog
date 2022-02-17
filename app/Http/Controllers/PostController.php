@@ -53,9 +53,8 @@ class PostController extends Controller
             }
             $post->save();
             return $post;
-        }else{
-            abort(505);
         }
+        abort(401);
     }
 
     public function delete($postId){
@@ -65,8 +64,7 @@ class PostController extends Controller
             $post->delete();
             return [];
         }
-        return [];
-        abort(505);
+        abort(401);
     }
     //
 }
