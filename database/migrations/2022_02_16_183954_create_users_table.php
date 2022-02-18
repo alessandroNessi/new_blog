@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('password');
             $table->string('api_token',64)->unique();
             $table->string('picture')->nullable();
-            $table->enum('subscription',['free','premium']);
             $table->timestamps();
         });
     }

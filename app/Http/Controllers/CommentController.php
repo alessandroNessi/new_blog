@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\UnauthorizedException;
 
 class CommentController extends Controller
@@ -19,18 +20,19 @@ class CommentController extends Controller
     {
         //
     }
-    // public function list(){
-        // return Post::with('user')->withCount('comments')->get();
-    // }
+    
+    //get the comment given the id
     public function getComment($commentId){
         return Comment::with('user')->findOrFail($commentId);
     }
 
+    //get all comments related to a post with user infos
     public function getPostComments(Request $request){
         $postId=$request->input('postId');
         return Comment::where('post_id',$postId)->with('user')->get();
     }
 
+    //create a post associated with a registered user
     public function create(Request $request){
         $userId = Auth::user()->id;
         $post=Post::findOrFail($request->input('post_id'));
@@ -45,25 +47,32 @@ class CommentController extends Controller
         return $comment;
     }
     
+    //edit the comment if the logged user is the one who created it
     public function edit(Request $request, $commentId){
-        $userId = Auth::user()->id;
-        $comment=Comment::findOrFail($commentId);
-        if($comment->user_id==$userId){
-            $comment->content=$request->content;
-            $comment->save();
-            return $comment;
+        if(Gate::allows('checkPremium-user')){
+            $comment=Comment::findOrFail($commentId);
+            if(Gate::allows('upOrDel-comment',$comment)){
+                $comment->content=$request->content;
+                $comment->save();
+                return $comment;
+            }
+            throw new UnauthorizedException('you don\'t own the comment you are trying to edit');
         }
-        throw new UnauthorizedException('you don\'t own the comment you are trying to edit');
+        throw new UnauthorizedException('you aren\'t a premium user');
     }
 
+    //delete a comment if the logged user is the one who created it
     public function delete($commentId){
-        $userId = Auth::user()->id;
-        $comment=Comment::findOrFail($commentId);
-        if($comment->user_id==$userId){
-            $comment->delete();
-            return [];
+        // return Auth::user();
+        if(Gate::allows('checkPremium-user') ){
+            $comment=Comment::findOrFail($commentId);
+            if(Gate::allows('upOrDel-comment',$comment)){
+                $comment->delete();
+                return [];
+            }
+            throw new UnauthorizedException('you don\'t own the comment you are trying to delete');
         }
-        throw new UnauthorizedException('you don\'t own the comment you are trying to delete');
+        throw new UnauthorizedException('you aren\'t a premium user');
     }
 
 }
